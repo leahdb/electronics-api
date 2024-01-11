@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\shopUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('test');
+});
+
+
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [shopUserController::class, 'authenticate']);
+
 });

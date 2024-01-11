@@ -40,6 +40,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // 'dashboard' => [
+        //     'driver' => 'session',
+        //     'provider' => 'dashboard_users',
+        // ],
+        'shop' => [
+            'driver' => 'session',
+            'provider' => 'shop_users',
+        ],
+
+
     ],
 
     /*
@@ -64,6 +74,18 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+
+        // 'dashboard_users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\DashboardUser::class,
+        // ],
+
+        'shop_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ShopUser::class,
+        ],
+
+
 
         // 'users' => [
         //     'driver' => 'database',
