@@ -4,6 +4,7 @@ use App\Http\Controllers\shopUserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +17,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::prefix('auth')->group(function () {
-    //Route::post('/login', [shopUserController::class, 'authenticate']);
-
-    Route::post('/login', [AuthController::class, 'authenticate']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
+
+Route::group(['middleware' => 'auth:shop'], function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/user', [AuthController::class, 'getAuthenticatedUser']);
+    });
+
+    Route::group(['middleware' => 'shopRole:admin'], function () {
+        Route::get('/shop-users', [ShopUserController::class, 'index']);
+    });
+
+});
+
+
 

@@ -11,43 +11,63 @@ use App\Models\ShopUser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Exception;
+
 
 class AuthController extends Controller
 {
-    public function login(Request $request) {
-        //return view('auth.login');
-        return true;
-    }
 
-
-    public function authenticate(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), ShopUser::getLoginValidationRules(), ShopUser::getValidationCustomMessages());
 
         if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'messages' => $validator->errors()]);
+            $response = new ValidationErrorResponse($validator->errors());
+            return $response->json();
         }
 
-        $isLoggedIn = Auth::guard('shop')->attempt($request->only([ShopUser::ATTR_EMAIL, ShopUser::ATTR_PASSWORD]));
+        $credentials = $request->only('email', 'password');
 
-        if (!$isLoggedIn) {
-            return redirect()->back()->withErrors();
+        try {
+            if (!$token = auth('shop')->attempt($credentials, ['guard' => 'shop'])) {
+                $response = new GeneralErrorResponse('Invalid credentials');
+                return $response->json();
+            }
+        } catch (Exception $e) {
+            $response = new GeneralErrorResponse('Could not login, please try again. ' . $e->getMessage());
+            return $response->json();
         }
 
-        $request->session()->regenerate();
+        $cookie = cookie('shop_jwt', $token, config('jwt.ttl'), '/', null, true, true, 'None');
 
-        $user = Auth::guard('shop')->user();
-
-        //return redirect()->action([HomeController::class, 'index']);
-        return true;
+        $response = new DashboardResponse();
+        return $response->json()->withCookie($cookie);
 
     }
 
 
-    public function logout(Request $request) {
-        Auth::guard('shop')->logout();
-        return redirect()->action([self::class, 'login']);
+    public function getAuthenticatedUser(Request $request)
+    {
+        $user = auth()->user();
+        $resource = new DashboardUserResource($user);
+        $response = new DashboardResponse($resource->toArray($request));
+        return $response->json();
     }
+
+
+
+    public function logout()
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+
+        $cookie = cookie()->forget('dashboard_jwt');
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Successfully logged out'
+        ])->withCookie($cookie);
+
+    }
+
 }

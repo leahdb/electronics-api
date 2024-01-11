@@ -45,7 +45,7 @@ return [
         //     'provider' => 'dashboard_users',
         // ],
         'shop' => [
-            'driver' => 'session',
+            'driver' => 'jwt',
             'provider' => 'shop_users',
         ],
 

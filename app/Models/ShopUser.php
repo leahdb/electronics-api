@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
-class ShopUser extends Authenticatable
+class ShopUser extends Authenticatable implements JWTSubject
 {
     use HasRoles;
 
@@ -53,5 +54,24 @@ class ShopUser extends Authenticatable
             self::ATTR_EMAIL.'.required' => 'Email is needed for authentication',
         );
     }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+        return [
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'email' => $this->email,
+            'phone_number_cc' => $this->phone_number_cc,
+            'phone_number' => $this->phone_number,
+            'roles' => $this->getRoleNames()->toArray(),
+        ];
+    }
+
 }
 
