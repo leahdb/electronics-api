@@ -14,6 +14,9 @@ class ShopUser extends Authenticatable implements JWTSubject
 {
     use HasRoles;
 
+    public const ROLE_SUPER_ADMIN = 'super-admin';
+    public const ROLE_SHOP_CLIENT = 'shop-client';
+
     public const ATTR_CREATED_AT = 'created_at';
 	public const ATTR_EMAIL = 'email';
 	public const ATTR_FIRST_NAME = 'first_name';
@@ -71,6 +74,21 @@ class ShopUser extends Authenticatable implements JWTSubject
             'phone_number' => $this->phone_number,
             'roles' => $this->getRoleNames()->toArray(),
         ];
+    }
+
+    public function getMenus()
+    {
+        $all = config('dashboard.menus');
+        $roles = $this->getRoleNames()->toArray();
+
+        $availableMenusForUser = array();
+        foreach ($all as $role => $menus) {
+            if (in_array($role, $roles)) {
+                $availableMenusForUser = array_merge($availableMenusForUser, $menus);
+            }
+        }
+
+        return $availableMenusForUser;
     }
 
 }

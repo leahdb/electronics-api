@@ -56,7 +56,7 @@ class AuthController extends Controller
         return DashboardResponse::new([
             'data' => [
                 'user' => $resource,
-                //'menus' => $user->getMenus(),
+                'menus' => $user->getMenus(),
                 'role' => $user->getRoleNames()
             ]
         ])->json();
