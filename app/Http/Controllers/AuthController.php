@@ -42,8 +42,7 @@ class AuthController extends Controller
 
         $cookie = cookie('shop_jwt', $token, config('jwt.ttl'), '/', null, true, true, 'None');
 
-        $response = new DashboardResponse();
-        return $response->json()->withCookie($cookie);
+        return DashboardResponse::new(['token' => $token])->json()->withCookie($cookie);
 
     }
 
@@ -51,9 +50,16 @@ class AuthController extends Controller
     public function getAuthenticatedUser(Request $request)
     {
         $user = auth()->user();
-        $resource = new DashboardUserResource($user);
-        $response = new DashboardResponse($resource->toArray($request));
-        return $response->json();
+        $resource = new ShopUserResource($user);
+        // $response = new DashboardResponse($resource->toArray($request));
+        // return $response->json();
+        return DashboardResponse::new([
+            'data' => [
+                'user' => $resource,
+                //'menus' => $user->getMenus(),
+                'role' => $user->getRoleNames()
+            ]
+        ])->json();
     }
 
 
@@ -62,7 +68,7 @@ class AuthController extends Controller
     {
         JWTAuth::invalidate(JWTAuth::getToken());
 
-        $cookie = cookie()->forget('dashboard_jwt');
+        $cookie = cookie()->forget('shop_jwt');
         return response()->json([
             'status' => 'ok',
             'message' => 'Successfully logged out'
