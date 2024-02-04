@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\shopUserController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\shopUserController;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -19,6 +19,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [RegistrationController::class, 'register']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [DashboardUserController::class, 'resetPassword']);
 });
 
 Route::group(['middleware' => 'auth:shop'], function () {

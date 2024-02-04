@@ -5,7 +5,7 @@
 @endphp
 
 @if($user)
-    <h3>hello, {{$user['first_name']}}</h3>
+    <h3>hello, {{$user['full_name']}}</h3>
 @endif
 
 @if(!$user)

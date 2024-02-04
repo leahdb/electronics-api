@@ -9,8 +9,7 @@ class ShopUserResource extends JsonResource
 {
     protected $attributesToDisplay = array(
         'id' => true,
-        'first_name' => true,
-        'last_name' => true,
+        'full_name' => true,
     );
     /**
      * Transform the resource into an array.

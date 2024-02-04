@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ShopUserResource;

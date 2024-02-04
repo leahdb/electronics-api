@@ -19,7 +19,7 @@ class ShopUser extends Authenticatable implements JWTSubject
 
     public const ATTR_CREATED_AT = 'created_at';
 	public const ATTR_EMAIL = 'email';
-	public const ATTR_FIRST_NAME = 'first_name';
+	public const ATTR_FULL_NAME = 'full_name';
 	public const ATTR_ID = 'id';
 	public const ATTR_LAST_NAME = 'last_name';
 	public const ATTR_PASSWORD = 'password';
@@ -33,9 +33,8 @@ class ShopUser extends Authenticatable implements JWTSubject
     protected $fillable = array(
         self::ATTR_CREATED_AT,
 		self::ATTR_EMAIL,
-		self::ATTR_FIRST_NAME,
+		self::ATTR_FULL_NAME,
 		self::ATTR_ID,
-		self::ATTR_LAST_NAME,
 		self::ATTR_PASSWORD,
 		self::ATTR_PHONE_NUMBER,
 		self::ATTR_PHONE_NUMBER_CC,
@@ -67,8 +66,7 @@ class ShopUser extends Authenticatable implements JWTSubject
     {
         //return [];
         return [
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
+            'full_name' => $this->full_name,
             'email' => $this->email,
             'phone_number_cc' => $this->phone_number_cc,
             'phone_number' => $this->phone_number,
