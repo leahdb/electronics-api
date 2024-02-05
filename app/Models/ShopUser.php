@@ -21,7 +21,6 @@ class ShopUser extends Authenticatable implements JWTSubject
 	public const ATTR_EMAIL = 'email';
 	public const ATTR_FULL_NAME = 'full_name';
 	public const ATTR_ID = 'id';
-	public const ATTR_LAST_NAME = 'last_name';
 	public const ATTR_PASSWORD = 'password';
 	public const ATTR_PHONE_NUMBER = 'phone_number';
 	public const ATTR_PHONE_NUMBER_CC = 'phone_number_cc';
@@ -41,6 +40,26 @@ class ShopUser extends Authenticatable implements JWTSubject
 		self::ATTR_REMEMBER_TOKEN,
 		self::ATTR_UPDATED_AT,
     );
+
+    public static function getStoreValidationRules(): array
+    {
+        return array(
+            'full_name' => 'required',
+            'email' => 'required|email|unique:shop_users,email',
+            'phone_number_cc' => 'required|string|max:10',
+            'phone_number' => 'required',
+            'password' => 'required|string|min:8',
+        );
+    }
+
+    public static function getUpdateValidationRules(): array
+    {
+        return array(
+            self::ATTR_FULL_NAME => 'required',
+            self::ATTR_EMAIL => 'required|email',
+            self::ATTR_PHONE_NUMBER_FULL => 'required',
+        );
+    }
 
     public static function getLoginValidationRules(): array
     {
