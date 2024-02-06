@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\shopUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\Product\ProductController as DashboardProductController;
+use App\Models\ShopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -31,8 +33,11 @@ Route::group(['middleware' => 'auth:shop'], function () {
         Route::get('/user', [AuthController::class, 'getAuthenticatedUser']);
     });
 
-    Route::group(['middleware' => 'shopRole:admin'], function () {
-        Route::get('/shop-users', [ShopUserController::class, 'index']);
+    Route::prefix('dash')->group(function () {
+        Route::group(['middleware' => 'shopRole:' . implode(',', [ShopUser::ROLE_SUPER_ADMIN])], function () {
+            Route::resource('/products', DashboardProductController::class);
+            Route::get('/shop-users', [ShopUserController::class, 'index']);
+        });
     });
 
 });

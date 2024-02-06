@@ -19,27 +19,20 @@ class UserRoleCheck
     public function handle($request, Closure $next, ...$roles)
     {
         $user = Auth::user();
-        //$allowedRoles = $roles;
+        $allowedRoles = $roles;
 
         if (!$user) {
             return response()->json(['status' => 'error', 'message' => 'please login']);
         }
 
-        // foreach ($allowedRoles as $role) {
-        //     /* @var ShopUser $user */
-        //     if ($user->hasRole($role)) {
-        //         return $next($request);
-        //     }
-        // }
-
-        // return response()->json(['status' => 'error', 'message' => 'you require different a role for this action']);
-
-
-        if ($user->hasRole(...$roles)) {
-            return response()->json(['status' => 'error', 'message' => 'you require different a role for this action']);
+        foreach ($allowedRoles as $role) {
+            /* @var DashboardUser $user */
+            if ($user->hasRole($role)) {
+                return $next($request);
+            }
         }
 
-        return $next($request);
+        return response()->json(['status' => 'error', 'message' => 'you require different a role for this action']);
 
     }
 

@@ -19,9 +19,9 @@ return [
         // ],
         ShopUser::ROLE_SUPER_ADMIN => [
             ['title' => 'Dashboard', 'link' => '/admin'],
-            ['title' => 'Products', 'link' => '/admin/sellers/list', 'order'],
-            ['title' => 'Orders', 'link' => '/admin/users/list', 'order'],
-            ['title' => 'Support', 'link' => '/admin/support', 'order'],
+            ['title' => 'Products', 'link' => '/admin/products/list'],
+            ['title' => 'Orders', 'link' => '/admin/orders/list'],
+            ['title' => 'Support', 'link' => '/admin/support'],
         ],
     ],
     // 'settings' => [
