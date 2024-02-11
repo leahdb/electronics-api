@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Product;
+namespace App\Http\Controllers\Dashboard\Product;
 
+use App\Helpers\CategoryHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ProductResource;
@@ -9,6 +10,8 @@ use App\Http\Responses\Dashboard\DashboardResponse;
 use App\Http\Responses\Dashboard\GeneralErrorResponse;
 use App\Http\Responses\Dashboard\ValidationErrorResponse;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -56,7 +59,36 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-        return DashboardResponse::new()->json();
+        $categories = ProductCategory::all()->toArray();
+        $nestedCategories = CategoryHelper::getNested($categories, ProductCategory::ATTR_PARENT_CATEGORY_ID);
+
+        $selectBoxCategories = array();
+        foreach ($nestedCategories as $parentCategory) {
+            if(isset($parentCategory['id'])){
+                $selectBoxCategories[] = array(
+                    'value' => $parentCategory['id'],
+                    'category_id' => $parentCategory['id'],
+                    'label' => $parentCategory['title'],
+                );
+
+                if (!isset($parentCategory['children'])) {
+                    continue;
+                }
+
+                foreach ($parentCategory['children'] as $childCategory) {
+                    $selectBoxCategories[] = array(
+                        'value' => $childCategory['id'],
+                        'category_id' => $childCategory['id'],
+                        'label' => '_' . $childCategory['title'],
+                    );
+                }
+            }
+            
+        }
+
+        return DashboardResponse::new([
+            'categories' => $selectBoxCategories
+        ])->json();
     }
 
     /**
@@ -67,7 +99,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data = $request->except(['image', 'images']);
         $validator = Validator::make($data, Product::getStoreValidationRules(), Product::getCustomErrorMessages());
 
         if ($validator->fails()) {
@@ -75,9 +107,34 @@ class ProductController extends Controller
         }
 
         $product = Product::query()->create($data);
+
+        if ($request->hasFile('image')) {
+            $imageFile = $request->file('image');
+            $imagePath = $imageFile->store('uploads/product_image', 'public');
+            $product->image = $imagePath;
+        }
+
         $product->save();
 
+        if ($request->hasFile('images') && !empty($request->file('images'))){
+
+            $productId = $product->id;
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('uploads/product_images', 'public');
+                $productImage = new ProductImage();
+
+                $productImage->product_id = $productId;
+                $productImage->image = $path;
+
+                $productImage->save();
+            }
+        }
+
+        $product = $product->fresh();
+        $images = $product->images;
+
         $resource = new ProductResource($product);
+        $resource->additional(['images' => $images]);
         return DashboardResponse::new([
             'data' => $resource
         ])->json();
@@ -108,7 +165,45 @@ class ProductController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        return DashboardResponse::new()->json();
+        $product = Product::query()->with('images')->find($id);
+        
+        if (!($product instanceof Product)) {
+            return GeneralErrorResponse::new('Product Not Found')->json();
+        }
+
+        $resource = new ProductResource($product);
+
+        $categories = ProductCategory::all()->toArray();
+        $nestedCategories = CategoryHelper::getNested($categories, ProductCategory::ATTR_PARENT_CATEGORY_ID);
+
+        $selectBoxCategories = array();
+        foreach ($nestedCategories as $parentCategory) {
+            if(isset($parentCategory['id'])){
+                $selectBoxCategories[] = array(
+                    'value' => $parentCategory['id'],
+                    'category_id' => $parentCategory['id'],
+                    'label' => $parentCategory['title'],
+                );
+
+                if (!isset($parentCategory['children'])) {
+                    continue;
+                }
+
+                foreach ($parentCategory['children'] as $childCategory) {
+                    $selectBoxCategories[] = array(
+                        'value' => $childCategory['id'],
+                        'category_id' => $childCategory['id'],
+                        'label' => '_' . $childCategory['title'],
+                    );
+                }
+            }
+            
+        }
+
+        return DashboardResponse::new([
+            'data' => $resource->toArray($request),
+            'categories' => $selectBoxCategories,
+        ])->json();
     }
 
     /**
@@ -129,7 +224,38 @@ class ProductController extends Controller
 
         $product = new Product();
         $data = $request->only($product->getFillable());
-        $product = Product::query()->find($id);
+
+        $product = Product::query()->with('images')->find($id);
+
+        if ($request->has('removedImages')) {
+            $removedImages = explode(',', request('removedImages'));
+            foreach ($removedImages as $imageId) {
+                $image = $product->images->where('id', $imageId)->first();
+                if ($image) {
+                    $image->delete();
+                }
+            }
+        }
+
+        if ($request->hasFile('image') && isset($data['image'])) {
+            $imageFile = $data['image'];
+            $imagePath = $imageFile->store('uploads/product_image', 'public');
+            $product->image = $imagePath;
+        }
+
+        unset($data['image']);
+
+        if ($request->hasFile('images') && !empty($request->file('images'))){
+
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('uploads/product_images', 'public');
+                $productImage = new ProductImage();
+                $productImage->product_id = $id;
+                $productImage->image = $path;
+                $productImage->save();
+            }
+        }
+
         try {
             $product->update($data);
             return DashboardResponse::new([

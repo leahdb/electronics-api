@@ -3,7 +3,8 @@
 use App\Http\Controllers\Auth\shopUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegistrationController;
-use App\Http\Controllers\Product\ProductController as DashboardProductController;
+use App\Http\Controllers\Dashboard\Product\ProductController as DashboardProductController;
+use App\Http\Controllers\Shop\Product\ProductController as ShopProductController;
 use App\Models\ShopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,5 +43,7 @@ Route::group(['middleware' => 'auth:shop'], function () {
 
 });
 
+// General shop APIs that doesn't require authentication
+Route::resource('/products', ShopProductController::class);
 
 
