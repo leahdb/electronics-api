@@ -37,7 +37,8 @@ class ProductController extends Controller
         // Modify the product query based on filters and sorting
         if (!empty($selectedCategories)) {
             $selectedCategoriesArray = explode(',', $selectedCategories);
-            $productBuilder->whereIn('product_category_id', $selectedCategoriesArray);
+            $categoryIds = $this->getCategoryAndChildrenIds($selectedCategoriesArray);
+            $productBuilder->whereIn('product_category_id', $categoryIds);
         }
 
         if (!empty($selectedBrands)) {
@@ -57,15 +58,6 @@ class ProductController extends Controller
             $productBuilder->where('price', '<=', $maxPrice);
         }
 
-        if ($sortOption == 1) {
-            $productBuilder->orderBy('price', 'asc');
-        } elseif ($sortOption == 2) {
-            $productBuilder->orderBy('price', 'desc');
-        } else {
-            // Default sorting logic
-            $productBuilder->orderByDesc('created_at');
-        }
-
         // Pagination logic remains the same
         $paginator = $productBuilder->paginate($perPage, ['*'], 'page', $currentPage)->appends(request()->query());
 
@@ -81,7 +73,12 @@ class ProductController extends Controller
         foreach ($categories as $category) {
             if ($category->parent_category_id === null) {
                 $nestedCategories[$category->title] = [];
-
+                $nestedCategories[$category->title][] = [
+                    'id' => $category->id,
+                    'title' => $category->title,
+                    'description' => $category->description,
+                    'slug' => $category->slug,
+                ];
                 foreach ($categories as $subcategory) {
                     if ($subcategory->parent_category_id === $category->id) {
                         $nestedCategories[$category->title][] = [
@@ -100,6 +97,24 @@ class ProductController extends Controller
         $paginationData['brands'] = $brands;
 
         return DashboardResponse::new($paginationData)->json();
+    }
+
+    private function getCategoryAndChildrenIds($selectedCategories)
+    {
+        $categoryIds = [];
+
+        foreach ($selectedCategories as $selectedCategory) {
+            // Add the ID of the selected category
+            $categoryIds[] = $selectedCategory;
+
+            // Fetch the children of the selected category
+            $childrenIds = ProductCategory::where('parent_category_id', $selectedCategory)->pluck('id')->toArray();
+
+            // Add the IDs of the children
+            $categoryIds = array_merge($categoryIds, $childrenIds);
+        }
+
+        return array_unique($categoryIds);
     }
 
 
