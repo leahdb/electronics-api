@@ -121,29 +121,6 @@ class ProductController extends Controller
 
     public function show(Request $request, $id)
     {
-        // $subCategoryTitle = optional($product->category)->title;
-
-        // $categories = ProductCategory::all();
-
-        // $nestedCategories = [];
-
-        // foreach ($categories as $category) {
-        //     if ($category->parent_category_id === null) {
-        //         $nestedCategories[$category->title] = [];
-
-        //         foreach ($categories as $subcategory) {
-        //             if ($subcategory->parent_category_id === $category->id) {
-        //                 $nestedCategories[$category->title][] = [
-        //                     'title' => $subcategory->title,
-        //                     'description' => $subcategory->description,
-        //                     'slug' => $subcategory->slug,
-        //                 ];
-        //             }
-        //         }
-        //     }
-        // }
-
-        
         $product = Product::query()->find($id);
         if (!$product instanceof Product) {
             return GeneralErrorResponse::new('data not found')->json();

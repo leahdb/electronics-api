@@ -11,6 +11,7 @@ class Product extends Model
     public const ATTR_ID = 'id';
 	public const ATTR_NAME = 'name';
 	public const ATTR_BRAND_NAME = 'brand_name';
+    public const ATTR_SLUG = 'slug';
 	public const ATTR_DESCRIPTION = 'description';
 	public const ATTR_IMAGE = 'image';
 	public const ATTR_INDEX = 'index';
@@ -27,6 +28,7 @@ class Product extends Model
         self::ATTR_ID,
 		self::ATTR_NAME,
 		self::ATTR_BRAND_NAME,
+        self::ATTR_SLUG,
 		self::ATTR_DESCRIPTION,
 		self::ATTR_IMAGE,
 		self::ATTR_INDEX,
@@ -44,6 +46,7 @@ class Product extends Model
     public function setTitleAttribute($value)
     {
         $this->attributes['title'] = $value;
+        $this->attributes['slug'] = Str::slug($value);
         
     }
 

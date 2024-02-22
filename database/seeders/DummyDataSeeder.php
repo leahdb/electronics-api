@@ -397,17 +397,19 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'Raspberry Pi 4 Model B',
                 'brand_name' => 'Raspberry Pi',
+                'slug' => 'raspberry-pi-4-model-b',
                 'description' => 'Powerful single-board computer for various applications.',
                 'image' => 'https://www.seeedstudio.com/blog/wp-content/uploads/2019/06/WechatIMG1371.png',
                 'price' => 35.99,
                 'index' => 0,
                 'stock_quantity' => 50,
                 'moq' => 100,
-                Product::ATTR_PRODUCT_CATEGORY_ID => 8,
+                Product::ATTR_PRODUCT_CATEGORY_ID => 12,
             ],
             [
                 'name' => 'Arduino Uno R3',
                 'brand_name' => 'Arduino',
+                'slug' => 'arduino-uno-r3',
                 'description' => 'Versatile open-source electronics platform for creators.',
                 'image' => 'https://rukminim1.flixcart.com/image/1664/1664/j76i3rk0/learning-toy/j/z/8/arduino-uno-r3-board-with-dip-atmega328p-adraxx-original-imaexh74faqkvygt.jpeg?q=90',
                 'price' => 24.99,
@@ -419,6 +421,7 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'ESP8266 WiFi Module',
                 'brand_name' => 'Generic',
+                'slug' => 'esp8266-wifi-module',
                 'description' => 'Wireless communication module for IoT projects.',
                 'image' => 'https://tse1.mm.bing.net/th?id=OIP.5LofEV_I-Y9PG-53g9Iu5AHaHa&pid=Api&P=0&h=220',
                 'price' => 3.49,
@@ -430,17 +433,19 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'MPU6050 Gyroscope and Accelerometer Module',
                 'brand_name' => 'Generic',
+                'slug' => 'mpu6050-gyroscope-and-accelerometer-module',
                 'description' => 'Module for measuring motion and orientation.',
                 'image' => 'https://tse3.mm.bing.net/th?id=OIP.9F2kvsmNfU-ekR6VZwVu4QHaFx&pid=Api&P=0&h=220',
                 'price' => 15.99,
                 'index' => 3,
                 'stock_quantity' => 50,
                 'moq' => 100,
-                Product::ATTR_PRODUCT_CATEGORY_ID => 8,
+                Product::ATTR_PRODUCT_CATEGORY_ID => 20,
             ],
             [
                 'name' => 'DHT22 Temperature and Humidity Sensor',
                 'brand_name' => 'Generic',
+                'slug' => 'dht22-temperature-and-humidity-sensor',
                 'description' => 'Sensor for measuring temperature and humidity.',
                 'image' => 'https://tse3.mm.bing.net/th?id=OIP.QZI5OE82YcwbFmafi3MSmAHaHa&pid=Api&P=0&h=220',
                 'price' => 9.99,
@@ -452,6 +457,7 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'BME280 Environmental Sensor',
                 'brand_name' => 'Generic',
+                'slug' => 'bme280-environmental-sensor',
                 'description' => 'Sensor for measuring environmental conditions.',
                 'image' => 'https://images-na.ssl-images-amazon.com/images/I/41j5cHWfpDL.jpg',
                 'price' => 8.99,
@@ -463,6 +469,7 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'Breadboard Jumper Wires Kit',
                 'brand_name' => 'Generic',
+                'slug' => 'breadboard-jumper-wires-kit',
                 'description' => 'Kit of jumper wires for prototyping on a breadboard.',
                 'image' => 'https://res.cloudinary.com/rsc/image/upload/b_rgb:FFFFFF,c_pad,dpr_1.0,f_auto,q_auto,w_700/c_pad,w_700/F7916454-01',
                 'price' => 6.99,
@@ -474,6 +481,7 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'STMicroelectronics Nucleo-F401RE Development Board',
                 'brand_name' => 'STMicroelectronics',
+                'slug' => 'stmicroelectronics-nucleo-f401re-development-board',
                 'description' => 'Development board for microcontroller projects.',
                 'image' => 'https://media.rs-online.com/f_auto/F8029425-01.jpg',
                 'price' => 19.99,
@@ -485,6 +493,7 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'LM317 Adjustable Voltage Regulator',
                 'brand_name' => 'Generic',
+                'slug' => 'lm317-adjustable-voltage-regulator',
                 'description' => 'Voltage regulator for electronic circuits.',
                 'image' => 'https://i5.walmartimages.com/asr/becb1f3d-da68-4fe4-ae95-1a031d7e068a_1.590bdaf485016abeff4daf43c9ff3a85.jpeg',
                 'price' => 1.99,
@@ -496,6 +505,7 @@ class DummyDataSeeder extends Seeder
             [
                 'name' => 'Soldering Iron Kit',
                 'brand_name' => 'Generic',
+                'slug' => 'soldering-iron-kit',
                 'description' => 'Kit for soldering electronic components.',
                 'image' => 'https://tse3.mm.bing.net/th?id=OIP.w9Q9-ejAmxUgg0v6tezclgHaHa&pid=Api&P=0&h=220',
                 'price' => 29.99,
@@ -504,7 +514,7 @@ class DummyDataSeeder extends Seeder
                 'moq' => 100,
                 Product::ATTR_PRODUCT_CATEGORY_ID => 8,
             ],
-            ];
+        ];
 
         foreach ($productData as $data) {
             $product = Product::query()->create($data);
